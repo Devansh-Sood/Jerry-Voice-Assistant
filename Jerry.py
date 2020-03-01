@@ -7,6 +7,7 @@ import os
 import random
 import smtplib
 import sys
+import subprocess
 
 
 engine = pyttsx3.init('sapi5')      # we can use the inbuilt voices from the windows with this
@@ -58,6 +59,14 @@ def sendEmail(to, content):
     server.sendmail('myemail@gmail.com', to, content)
     server.close()
 
+def Note(text):
+    date = datetime.datetime.now()
+    file_name = str(date).replace(":","-") + "-note.txt"            #gives the name to the file
+    with open(file_name , "w") as f:
+        f.write(text)
+
+    subprocess.Popen(["notepad.exe",file_name])
+
 if __name__=="__main__":        # main method
     wishMe()
     while True:
@@ -105,6 +114,12 @@ if __name__=="__main__":        # main method
             except Exception as e:
                 print(e)
                 speak("Sorry not able to send this Email!")
+
+        elif 'take notes' in query:
+            speak("What would you like me to write down ,sir?")
+            text = takeCommand().lower()            # attempt to recognize any speech in the audio
+            Note(text)
+            speak("I have made a note of that!")
 
         elif 'turn off' in query:
             sys.exit()
