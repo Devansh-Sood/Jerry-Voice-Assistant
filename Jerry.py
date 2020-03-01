@@ -5,6 +5,8 @@ import wikipedia
 import webbrowser
 import os
 import random
+import smtplib
+import sys
 
 
 engine = pyttsx3.init('sapi5')      # we can use the inbuilt voices from the windows with this
@@ -48,6 +50,14 @@ def takeCommand():
         return "None"
     return query
 
+def sendEmail(to, content):
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.login('mymail@gmail.com', 'password')
+    server.sendmail('myemail@gmail.com', to, content)
+    server.close()
+
 if __name__=="__main__":        # main method
     wishMe()
     while True:
@@ -76,3 +86,27 @@ if __name__=="__main__":        # main method
             songs = os.listdir(music_dir)           #list all the files in the music_dir
             print(songs)    
             os.startfile(os.path.join(music_dir, random.choice(songs)))         #opens the file and plays the random song
+
+        elif 'the time' in query:
+            strTime = datetime.datetime.now().strftime("%H:%M:%S")    
+            speak(f"Sir, the time is {strTime}")
+
+        elif 'open code' in query:
+            codePath = "D:\\Microsoft VS Code\\Code.exe"
+            os.startfile(codePath)
+
+        elif 'email to' in query:
+            try:
+                speak("What should I say?")
+                content = takeCommand()
+                to = "destinationEmail@gmail.com"    
+                sendEmail(to, content)
+                speak("Email has been sent!")
+            except Exception as e:
+                print(e)
+                speak("Sorry not able to send this Email!")
+
+        elif 'turn off' in query:
+            sys.exit()
+
+        
